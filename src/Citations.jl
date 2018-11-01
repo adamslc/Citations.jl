@@ -5,12 +5,13 @@ for the `url` in a markdown link.
 module Citations
 
 import Documenter:
-	Documenter,
-	Documents,
-	Utilities,
-	Builder,
-	Expanders,
-	Writers
+    Documenter,
+    Documents,
+    Utilities,
+    Builder,
+    Expanders,
+    Writers,
+    Anchors
 
 import .Utilities: Selectors
 import .Utilities.DOM: @tags
@@ -23,14 +24,33 @@ function __init__()
     copy!(btp, pyimport_conda("bibtexparser", "bibtexparser"))
 end
 
-# Extra build step to resolve citations
+include("walk_and_replace.jl")
+
+# Nodes for citations and bibliographies
+include("nodes.jl")
+
+include("CitationStyle.jl")
+
+struct CitationPlugin <: Documenter.Plugin
+    bibnodes::Vector{BibliographyNode}
+    style::Symbol
+
+    function CitationPlugin(style::Symbol=:default)
+        new(Vector{BibliographyNode}(), style)
+    end
+
+end
+
+# Extra build steps to register and resolve citations
+include("RegisterCitations.jl")
+include("GenerateBibliography.jl")
 include("ResolveCitations.jl")
 
 # Extend Documenter's Expander step to support bibliographies
 include("BibliographyBlocks.jl")
 
 # Extentions to the builtin HTMLWriter
-include("HTMLWriter.jl")
+# include("HTMLWriter.jl")
 
 # Parse .bib files and format citations
 include("citations.jl")

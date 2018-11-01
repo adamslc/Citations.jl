@@ -1,8 +1,8 @@
 """
-Register citations with correct bibliography
+Resolve citations in bibliography, and format bibnodes and citations.
 """
 abstract type ResolveCitations <: Builder.DocumentPipeline end
-Selectors.order(::Type{ResolveCitations}) = 4.0
+Selectors.order(::Type{ResolveCitations}) = 5.5
 Selectors.matcher(::Type{ResolveCitations}) = true
 Selectors.strict(::Type{ResolveCitations}) = false
 function Selectors.runner(::Type{ResolveCitations}, doc::Documents.Document)
@@ -20,35 +20,12 @@ function resolve_citations(doc::Documents.Document)
 end
 
 function resolve_citations(element, page, doc)
-	Documents.walk(page.globals.meta, element) do link
-		resolve_citation(link, page.globals.meta, page, doc)
+	walk_and_replace(page.globals.meta, element) do el
+		resolve_citation(el, page.globals.meta, page, doc)
 	end
 end
 
-resolve_citation(other, meta, page, doc) = true
-function resolve_citation(link::Markdown.Link, meta, page, doc)
-	if occursin(r"^@citation", link.url)
-		if link.url == "@citation" && length(link.text) == 1
-			citationkey = link.text[1]
-		elseif occursin(r"^@citation .+", link.url)
-			citationkey = split(link.url)[2]
-		else
-			Utilities.warn("could not find citation key. Giving up.")
-			return false
-		end
-
-		# Find the correct bibnode if one exists
-		for bibnode in doc.internal.extras[:bibnodes]
-			if length(bibnode.pages) == 0 || page.source in bibnode.pages
-				push!(bibnode.elements, citationkey)
-				path = relpath(bibnode.build, dirname(page.build))
-				link.url = string(path, '#', citationkey)
-				return false
-			end
-		end
-
-		Utilities.warn("citation $citationkey has no bibliography.")
-	end
-
-	return false
+resolve_citation(other, meta, page, doc) = nothing
+function resolve_citation(cite::CitationNode, meta, page, doc)
+	return cite.bibnode.database[cite.key][2]
 end
