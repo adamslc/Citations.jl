@@ -6,8 +6,8 @@ function domify(ctx, navnode, bib::BibliographyNode)
     lis = []
     for el in bib.elements
         if !haskey(entries, el)
-        	Utilities.warn("could not find bib entry for $el.")
-        	continue
+            Utilities.warn("could not find bib entry for $el.")
+            continue
         end
 
         citation = format_bib_entry(entries[el])
