@@ -1,6 +1,6 @@
 mutable struct BibliographyNode
-	pages::Vector{String}
-	bibfile::String
+    pages::Vector{String}
+    bibfile::String
     bibdatabase::Dict{String, Any}
     database::Dict{String, Tuple{Any, Any}}
     style::Union{Symbol, Nothing}
@@ -9,8 +9,8 @@ mutable struct BibliographyNode
     keys::Vector
 
     function BibliographyNode(;
-    		Pages = [],
-    		BibFile = "src/assets/bibliography.bib",
+        Pages = [],
+        BibFile = "src/assets/bibliography.bib",
             Style = nothing,
             build,
             source,
@@ -29,3 +29,4 @@ struct CitationNode
     alttext::Union{String, Nothing}
     bibnode::Union{BibliographyNode, Nothing}
 end
+

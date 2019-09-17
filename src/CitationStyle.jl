@@ -31,7 +31,7 @@ function format_bibentry(entry)
         if authorstr != ""
             authorstr *= ", "
         end
-        
+
         name = split(author)
         for piece in name[1:end-1]
             authorstr *= string(uppercase(piece[1]), ". ")

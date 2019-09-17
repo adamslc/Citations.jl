@@ -1,4 +1,5 @@
 abstract type BibliographyBlocks <: Expanders.ExpanderPipeline end
+
 Selectors.order(::Type{BibliographyBlocks}) = 6.0
 Selectors.matcher(::Type{BibliographyBlocks}, node, page, doc) = Expanders.iscode(node, "@bibliography")
 function Selectors.runner(::Type{BibliographyBlocks}, x, page, doc)
